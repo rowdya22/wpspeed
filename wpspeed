@@ -1,14 +1,17 @@
-unset HISTFILE
 clear
+unset wpspeedv
+wpspeedv=v0.3
 echo
-echo -e "   _       __      _____                     __"
-echo -e "  | |     / /___  / ___/____  ___  ___  ____/ /"
-echo -e "  | | /| / / __ \ \__ \/ __ \/ _ \/ _ \/ __  / "
-echo -e "  | |/ |/ / /_/ / __/ / /_/ /  __/  __/ /_/ /  "
-echo -e "  |__/|__/ .___/ /___/ .___/\___/\___/\__,_/   "
-echo -e "        /_/  v0.1   /_/   a few wp performance tests"
+echo -e "   _       __      _____                     __ "
+echo -e "  | |     / /___  / ___/____  ___  ___  ____/ / "
+echo -e "  | | /| / / __ \ \__ \/ __ \/ _ \/ _ \/ __  /  "
+echo -e "  | |/ |/ / /_/ / __/ / /_/ /  __/  __/ /_/ /   "
+echo -e "  |__/|__/ .___/ /___/ .___/\___/\___/\__,_/    "
+echo -e "        /_/  $wpspeedv   /_/   a few wp performance tests"
 echo
 
+unset loadhistory ;
+unset wpspeed ;
 unset boxx ;
 unset corecount ;
 unset highload ;
@@ -18,32 +21,27 @@ unset thismonthfile ;
 unset lastmonthfile ;
 unset LastMonth ;
 unset TodayMonth ;
+unset HISTFILE
 export LANG="en_US.utf8" ;
 unset boxx
 unset boxfullname
 boxfullname=`hostname`
 boxx=`hostname | sed 's/\..*$//'`
+unset apps
 
-unset WhatDoYouWantWithMe
+echo -en "  This tool is for troubleshooting performance issues with WordPress sites,\n  and with the server. Available commands:\n\n  loadhistory: see when the load on $boxx was high in the last 30 days\n\n  wpspeed: See a quick optimization report of the WordPress install in the\n  current directory.\n\n  apps: Find out what scripts are installed on this hosting account.\n\n"
 
-echo -en "  This tool can be used to help troubleshoot speed and performance issues with\n  WordPress sites. It's meant to be run in the document root of a WordPress\n  install.\n\n  To see when the load was high on $boxx in the last 30 days type 'load'.\n\n  To see a few optimization tests of this WordPress install type 'wp'.\n\n  Type anything else to quit.\n\n  "
+function loadhistory () {
 
-
-
-
-unset WhatDoYouWantWithMe
-read WhatDoYouWantWithMe
-if [ "$WhatDoYouWantWithMe" == "load" ]; then
- ## load checker tool
-
+## load checker tool
 
 export LANG="en_US.utf8" ;
 boxx=`hostname | sed 's/\..*$//'` ;
 corecount=`nproc`;
 highload=$((${corecount}*8));
 echo
-echo -e "\e[1;32m Load Report:\e[0m"
-echo -e "\n $boxx has $corecount cores, so generally speaking any load over $highload is\n considered high. This is just a quick way of pinpointing when the\n load was high in the past, it's not definitive by any means.\n\n Listed below are dates and times when the load has gotten that high\n in the last 30 days or so. If nothing is listed for a date, it means\n the load didn't get up to $highload or above on that day. You can ignore\n any 'Cannot open /var/log/sa/' errors, those are just days when we\n don't have logs.\n\n The report is being generated now, it may take a minute or two.\n"
+echo -e "\e[1;32m  Load Report:\e[0m"
+echo -e "\n  $boxx has $corecount cores, so generally speaking any load over $highload is\n  considered high. This is just a quick way of pinpointing when the\n  load was high in the past, it's not definitive by any means.\n\n  Listed below are dates and times when the load has gotten that high\n  in the last 30 days or so. If nothing is listed for a date, it means\n  the load didn't get up to $highload  or above on that day. You can ignore\n  any 'Cannot open /var/log/sa/' errors, those are just days when we\n  don't have logs.\n\n  The report is being generated now, it may take a minute or two.\n"
 
 LastMonth=`date +%b --date="last month"` ; TomorrowDayOfTheMonth=`date +%d  --date="2 day"` ; loadavg=$((`nproc`*8)); for lastmonthfile in `seq -w $TomorrowDayOfTheMonth 31` ; do echo -e "/var/log/sa/sa$lastmonthfile"; sar -q -f "/var/log/sa/sa$lastmonthfile" | awk -v loadavg="$loadavg" '{if (NR>1 && $5 > loadavg) {print $1 $2 " - " $5}}'; done | sed -r 's/...(AM|PM)/\1/g' | sed "s/\/var\/log\/sa\/sa/\n$LastMonth /g" | sed -e ':a;$!{N;s/\n..........ldavg-1//;ba;}' | uniq ;
 
@@ -59,29 +57,32 @@ unset lastmonthfile ;
 unset LastMonth ;
 unset TodayMonth ;
  
- ## end of load checker tool
- 
- else
-  if [ "$WhatDoYouWantWithMe" == "wp" ]; then
+## end of load checker tool
+
+}
+
+function wpspeed () {
+
    ## wpspeed tool
-  
-
-tput cuu1
-echo "                                                                                "
 
 
-# . <(curl -sS https://miles.cm/code/wpspeed)
 
 
 #######################################################
-##                    v0.1 changelog                 ##
+##                      Changelog                    ##
 #######################################################
 #                                                     #
-# This is the first version so the whole thing is a   #
-# change, I guess.                                    #
+# v0.1 first version, all features introducted.       #
+#                                                     #
+# v0.2 spelling errors fixed. WpSpeed now recognises  #
+# "Cache-Control" headers in the browser cache check. #
+#                                                     #
+# v0.3 "wp" and "load" commands changed to "wpspeed"  #
+# and "loadhistory". Added "apps" command. Commands   #
+# work for whole ssh session. Script only needs to be #
+# imported once now.                                  #
 #                                                     #
 #######################################################
-
 
 
 
@@ -98,54 +99,24 @@ echo "                                                                          
 #######################################################
 
 
-tput cuu1
-tput cuu1
-tput cuu1
-tput cuu1
-tput cuu1
-tput cuu1
-tput cuu1
-tput cuu1
-tput cuu1
-tput cuu1
-tput cuu1
-echo "                                                                                "
-echo "                                                                                "
-echo "                                                                                "
-echo "                                                                                "
-echo "                                                                                "
-echo "                                                                                "
-echo "                                                                                "
-echo "                                                                                "
-echo "                                                                                "
-echo "                                                                                "
-echo "                                                                                "
-tput cuu1
-tput cuu1
-tput cuu1
-tput cuu1
-tput cuu1
-tput cuu1
-tput cuu1
-tput cuu1
-tput cuu1
-tput cuu1
-tput cuu1
-tput cuu1
-echo
+
+
+
 
 #######################################
 ## Checking for wordpress core files ##
 #######################################
 
+unset WPcorefiles
+
 WPcorefiles=$(find -maxdepth 1 -name "wp-config.php" )
 if [[ -z "$WPcorefiles" ]]; then
-  echo -e "\e[0;31m  Error: WordPress core files not found in this directory.\e[0m \n\n  (This is supposed to be run inside the directory where WordPress is.)\n"
+  echo -e "\e[0;31m\nError: WordPress core files not found in this directory.\e[0m \n\n(This is supposed to be run inside the directory where WordPress is.)\n"
  else
 
-
-
-
+echo -en "\nOptimization Report for " 
+pwd | grep -o "`whoami`.*" | sed "s/$whoami//g"
+echo
 
 ###################################
 ## Checking for gzip compression ##
@@ -157,11 +128,8 @@ then
  IsWThreeTotalCacheInstalled="w3-total-cache"
 fi
  
- 
-
- unset IsHtaccessFilePresent
+unset IsHtaccessFilePresent
 IsHtaccessFilePresent=$(find -maxdepth 1 -name ".htaccess" )
-
 
 if [[ -z "$IsWThreeTotalCacheInstalled" ]]; then
 
@@ -177,23 +145,20 @@ if [[ -z "$IsWThreeTotalCacheInstalled" ]]; then
     fi 
   fi
     else
-    
-    
+
     if [[ -z "$IsHtaccessFilePresent" ]]; then
-    echo -e "1) Gzip compression: \e[0;31mdoes not appear to be enabled (no .htaccess file found).\e[0m \n   Suggestion: Since w3-total-cache is already isntalled, the easiest fix\n   would be to enable it there."
+    echo -e "1) Gzip compression: \e[0;31mdoes not appear to be enabled (no .htaccess file found).\e[0m \n   Suggestion: Since w3-total-cache is already installed, the easiest fix\n   would be to enable it there."
   else
    echo -en "1) Gzip compression:"
     if egrep -q "AddOutputFilterByType DEFLATE|mod_gzip" .htaccess
     then
      echo -en "\e[0;32m appears to be enabled in .htaccess.\e[0m\n"
     else
-     echo -e "\e[0;31m does not appear to be enabled in .htaccess.\e[0m\n   Suggestion: Since w3-total-cache is already isntalled, the easiest fix\n   would be to enable it there."
+     echo -e "\e[0;31m does not appear to be enabled in .htaccess.\e[0m\n   Suggestion: Since w3-total-cache is already installed, the easiest fix\n   would be to enable it there."
     fi 
 
 fi
 fi
-
-
 
 
 
@@ -299,7 +264,6 @@ fi
 
 
 
-
 ############################################
 ## Checking for image compression plugins ##
 ############################################
@@ -364,7 +328,6 @@ then
 else
  echo -e "\e[0;31m no known image compression plugins found.\e[0m\n\e[0;36m   Note: Customer may be compressing images manually instead of using a plugin.\e[0m\n    Suggestion: Install either tiny-compress-images or ewww-image-optimizer."
 fi
-
 
 
 
@@ -496,15 +459,6 @@ fi
 
 
 
-
-
-
-
-
-
-
-
-
 ################################
 ## Checking for browser cache ##
 ################################
@@ -514,14 +468,13 @@ IsHtaccessFilePresent=$(find -maxdepth 1 -name ".htaccess" )
     echo -e "5) Browser cache rules: \e[0;31mdo not appear to be present (no .htaccess file found).\e[0m"
   else
    echo -en "5) Browswer cache rules:"
-    if egrep -q "AddType|ExpiresByType" .htaccess
+    if egrep -q "AddType|ExpiresByType|Header set Cache-Control" .htaccess
     then
      echo -en "\e[0;32m appear to be present in .htaccess.\e[0m\n"
     else
      echo -en "\e[0;31m do not appear to be present in .htaccess.\e[0m\n"
     fi 
   fi
-
 
 
 
@@ -544,29 +497,16 @@ if [[ -z "$IsPThreePerformanceProfilerInstalled" ]]; then
    echo -e ", but p3-profiler (a\n   plugin that helps pinpoint plugin lag) is installed as well so it's safe to\n   assume the site's developer is aware of any plugin lag."
 fi
 
-
-
-
-
-## find out customer contact email
-contactemail=`cat ~/.contactemail`;
-
 ##to convert new line to br (for making an output readable in html or php) use this | sed '{:q;N;s/\n/<br>/g;t q}'
-
-
-
-
-
-
 
 #end of if then statement that checks if there's a wordpress install
 fi  
 
 #end of wpspeed
-else
 
-tput cuu1
-   echo -e "  Quitting...\n"
-   
-  fi
-fi
+}
+
+
+function apps () {
+cat ~/tmp/installedapps.yml
+}
