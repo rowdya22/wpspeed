@@ -6,8 +6,8 @@ Once you have made a SSH connection to an account with wordpress installed run t
 
     . <(curl -sS https://raw.githubusercontent.com/miles-cm/wpspeed/master/wpspeed)
 
-
-**wpspeed command:**
+## Available commands:
+**wpspeed**
 * Checks if gzip compression exists in the .htaccess file.
 * Checks if database cleanup plugins are installed (such as wp-speed or wp-optimize).
 * Checks if image compression plugins are installed (such as tiny-compress-images or ewww-image-optimizer).
