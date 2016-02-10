@@ -1,6 +1,6 @@
 clear
 unset wpspeedv
-wpspeedv=v0.3
+wpspeedv=v0.4
 echo
 echo -e "   _       __      _____                     __ "
 echo -e "  | |     / /___  / ___/____  ___  ___  ____/ / "
@@ -29,7 +29,7 @@ boxfullname=`hostname`
 boxx=`hostname | sed 's/\..*$//'`
 unset apps
 
-echo -en "  This tool is for troubleshooting performance issues with WordPress sites,\n  and with the server. Available commands:\n\n  loadhistory: see when the load on $boxx was high in the last 30 days\n\n  wpspeed: See a quick optimization report of the WordPress install in the\n  current directory.\n\n  apps: Find out what scripts are installed on this hosting account.\n\n"
+echo -en "  This tool is for troubleshooting performance issues with WordPress sites,\n  and with the server. Available commands:\n\n  loadhistory: see when the load on $boxx was high in the last 30 days\n\n  wpspeed: See a quick optimization report of the WordPress install in the\n  current directory.\n\n  wpspeed -p, --plugins Show how many times the site calls to each plugin\n  on each page load.\n\n  apps: Find out what scripts are installed on this hosting account.\n\n"
 
 function loadhistory () {
 
@@ -39,13 +39,19 @@ export LANG="en_US.utf8" ;
 boxx=`hostname | sed 's/\..*$//'` ;
 corecount=`nproc`;
 highload=$((${corecount}*8));
+if [ $highload -gt 100 ] 
+then
+highload=100 ;
+fi
+
+
 echo
 echo -e "\e[1;32m  Load Report:\e[0m"
-echo -e "\n  $boxx has $corecount cores, so generally speaking any load over $highload is\n  considered high. This is just a quick way of pinpointing when the\n  load was high in the past, it's not definitive by any means.\n\n  Listed below are dates and times when the load has gotten that high\n  in the last 30 days or so. If nothing is listed for a date, it means\n  the load didn't get up to $highload  or above on that day. You can ignore\n  any 'Cannot open /var/log/sa/' errors, those are just days when we\n  don't have logs.\n\n  The report is being generated now, it may take a minute or two.\n"
+echo -e "\n  $boxx has $corecount cores, so generally speaking any load over $highload is\n  considered high. This is just a quick way of pinpointing when the\n  load was high in the past, it's not definitive by any means.\n\n  Listed below are dates and times when the load has gotten that high\n  in the last 30 days or so. If nothing is listed for a date, it means\n  the load didn't get up to $highload or above on that day. You can ignore\n  any 'Cannot open /var/log/sa/' errors, those are just days when we\n  don't have logs.\n\n  The report is being generated now, it may take a minute or two.\n"
 
-LastMonth=`date +%b --date="last month"` ; TomorrowDayOfTheMonth=`date +%d  --date="2 day"` ; loadavg=$((`nproc`*8)); for lastmonthfile in `seq -w $TomorrowDayOfTheMonth 31` ; do echo -e "/var/log/sa/sa$lastmonthfile"; sar -q -f "/var/log/sa/sa$lastmonthfile" | awk -v loadavg="$loadavg" '{if (NR>1 && $5 > loadavg) {print $1 $2 " - " $5}}'; done | sed -r 's/...(AM|PM)/\1/g' | sed "s/\/var\/log\/sa\/sa/\n$LastMonth /g" | sed -e ':a;$!{N;s/\n..........ldavg-1//;ba;}' | uniq ;
+LastMonth=`date +%b --date="last month"` ; TomorrowDayOfTheMonth=`date +%d  --date="2 day"` ; for lastmonthfile in `seq -w $TomorrowDayOfTheMonth 31` ; do echo -e "/var/log/sa/sa$lastmonthfile"; sar -q -f "/var/log/sa/sa$lastmonthfile" | awk -v highload="$highload" '{if (NR>1 && $5 > highload) {print $1 $2 " - " $5}}'; done | sed -r 's/...(AM|PM)/\1/g' | sed "s/\/var\/log\/sa\/sa/\n$LastMonth /g" | sed -e ':a;$!{N;s/\n..........ldavg-1//;ba;}' | uniq ;
 
-TodayMonth=`date +%b` ; TodayDayOfTheMonth=`date +%d` ; loadavg=$((`nproc`*8)); for thismonthfile in `seq -w 1 $TodayDayOfTheMonth` ; do echo -e "/var/log/sa/sa$thismonthfile"; sar -q -f "/var/log/sa/sa$thismonthfile" | awk -v loadavg="$loadavg" '{if (NR>1 && $5 > loadavg) {print $1 $2 " - " $5}}'; done | sed -r 's/...(AM|PM)/\1/g' | sed "s/\/var\/log\/sa\/sa/\n$TodayMonth /g" | sed -e ':a;$!{N;s/\n..........ldavg-1//;ba;}' | uniq ;
+TodayMonth=`date +%b` ; TodayDayOfTheMonth=`date +%d` ; for thismonthfile in `seq -w 1 $TodayDayOfTheMonth` ; do echo -e "/var/log/sa/sa$thismonthfile"; sar -q -f "/var/log/sa/sa$thismonthfile" | awk -v highload="$highload" '{if (NR>1 && $5 > highload) {print $1 $2 " - " $5}}'; done | sed -r 's/...(AM|PM)/\1/g' | sed "s/\/var\/log\/sa\/sa/\n$TodayMonth /g" | sed -e ':a;$!{N;s/\n..........ldavg-1//;ba;}' | uniq ;
 
 unset boxx ;
 unset corecount ;
@@ -63,49 +69,63 @@ unset TodayMonth ;
 
 function wpspeed () {
 
+
+##############################################################################################################
+##                                                  Changelog                                               ##
+##############################################################################################################
+#                                                                                                            #
+# v0.1 First version, all features introduced.                                                               #
+#                                                                                                            #
+# v0.2 Spelling errors fixed. WpSpeed now recognizes "Cache-Control" headers in the browser cache check.     #
+#                                                                                                            #
+# v0.3 The "wp" and "load" commands changed to "wpspeed" and "loadhistory". Added "apps" command.            #
+# Commands work for whole ssh session. Script only needs to be imported once now.                            #
+#                                                                                                            #
+# v0.4 Added "--plugins" flag and "--help" flag to wpspeed command.                                          #
+# "Zen Cache Pro" added to known caching plugins list.                                                       #
+#                                                                                                            #
+##############################################################################################################
+
+
+
+if [[ ! -z "$1" && ! "$1" == "--help" && ! "$1" == "-help" && ! "$1" == "help" && ! "$1" == "-h" && ! "$1" == "h" && ! "$1" == "--plugins" && ! "$1" == "-plugins" && ! "$1" == "-p" && ! "$1" == "p" && ! "$1" == "plugin" && ! "$1" == "plugins" ]]; then
+echo -e "$1 isn't a valid command. Try 'wpspeed --help' for a list of available commands."
+fi
+
+
+if [[ $1 == "--help" || $1 == "-help" || $1 == "help" || $1 == "h" || $1 == "-h" ]]; then
+echo -en "  WpSpeed Help: Available commands:\n\n  loadhistory: see when the load on $boxx was high in the last 30 days\n\n  wpspeed: See a quick optimization report of the WordPress install in the\n  current directory.\n\n  wpspeed -p, --plugins Show how many times the site calls to each plugin\n  on each page load.\n\n  apps: Find out what scripts are installed on this hosting account.\n\n"
+fi
+
+
+
+if [[ $1 == "--plugins" || $1 == "-plugins" || $1 == "-p" || $1 == "p" || $1 == "plugin" || $1 == "plugins" ]]; then
+
+#######################################
+####       wpspeed --plugins       ####
+#######################################
+
+unset WPcorefiles
+WPcorefiles=$(find -maxdepth 1 -name "wp-config.php" )
+if [[ -z "$WPcorefiles" ]]; then
+  echo -e "\e[0;31m\nError: WordPress core files not found in this directory.\e[0m \n\n(This is supposed to be run inside the directory where WordPress is.)\n"
+ else
+
+echo -e "\nHow many times this site calls to each plugin on per page load:\n" ;
+
+strace php index.php 2>&1 | perl -ne 'if (/(mu-plugins|plugins)\/([\w\d-_]*)/ ) { print "$1/$2\n" }' | sort | uniq -c | sort -n | sed '/mu-plugins\/sso/ d';
+fi
+
+fi
+
+
+
+#######################################
+####           wpspeed             ####
+#######################################
+
+if [[ -z "$1" ]]; then
    ## wpspeed tool
-
-
-
-
-#######################################################
-##                      Changelog                    ##
-#######################################################
-#                                                     #
-# v0.1 first version, all features introducted.       #
-#                                                     #
-# v0.2 spelling errors fixed. WpSpeed now recognises  #
-# "Cache-Control" headers in the browser cache check. #
-#                                                     #
-# v0.3 "wp" and "load" commands changed to "wpspeed"  #
-# and "loadhistory". Added "apps" command. Commands   #
-# work for whole ssh session. Script only needs to be #
-# imported once now.                                  #
-#                                                     #
-#######################################################
-
-
-
-#######################################################
-##                        READ ME                    ##
-#######################################################
-#                                                     #
-# This script is just meant to perform searches for   #
-# things like gzip and caching/optimization plugins.  #
-# It shows the results in terminal and offers to      #
-# print the results to a one page report that can be  #
-# viewed once by a tech or emailed.                   #
-#                                                     #
-#######################################################
-
-
-
-
-
-
-#######################################
-## Checking for wordpress core files ##
-#######################################
 
 unset WPcorefiles
 
@@ -119,7 +139,7 @@ pwd | grep -o "`whoami`.*" | sed "s/$whoami//g"
 echo
 
 ###################################
-## Checking for gzip compression ##
+#  Checking for gzip compression  #
 ###################################
 
 unset IsWThreeTotalCacheInstalled
@@ -163,7 +183,7 @@ fi
 
 
 ###########################################
-## Checking for database cleanup plugins ##
+#  Checking for database cleanup plugins  #
 ###########################################
 
 unset InstalledDBCleanupPlugins
@@ -265,7 +285,7 @@ fi
 
 
 ############################################
-## Checking for image compression plugins ##
+#  Checking for image compression plugins  #
 ############################################
 
 unset InstalledImgCompressionPlugins
@@ -332,7 +352,7 @@ fi
 
 
 ##################################
-## Checking for caching plugins ##
+#  Checking for caching plugins  #
 ##################################
 
 unset InstalledCachingPlugins
@@ -440,6 +460,11 @@ then
  InstalledCachingPlugins="$InstalledCachingPlugins zencache,"
 fi
 
+if [ -d wp-content/plugins/zencache-pro ] 
+then
+ InstalledCachingPlugins="$InstalledCachingPlugins zencache-pro,"
+fi
+
 if [[ $IsWordfenceInstalled ]]
    then
      if [[ $InstalledCachingPlugins ]]
@@ -460,7 +485,7 @@ fi
 
 
 ################################
-## Checking for browser cache ##
+#  Checking for browser cache  #
 ################################
 unset IsHtaccessFilePresent
 IsHtaccessFilePresent=$(find -maxdepth 1 -name ".htaccess" )
@@ -479,7 +504,7 @@ IsHtaccessFilePresent=$(find -maxdepth 1 -name ".htaccess" )
 
 
 ##########################################################################
-## Check for number of plugins, and suggests P3 Profiler if not present ##
+# Check for number of plugins, and suggests P3 Profiler if not present   #
 ##########################################################################
 unset WPPluginCount
 WPPluginCount=`find wp-content/plugins/* -maxdepth 0 -type d | wc -l`
@@ -503,6 +528,7 @@ fi
 fi  
 
 #end of wpspeed
+fi
 
 }
 
