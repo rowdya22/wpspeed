@@ -1,6 +1,6 @@
 clear
 unset wpspeedv
-wpspeedv=v0.4
+wpspeedv=v0.4.1
 echo
 echo -e "   _       __      _____                     __ "
 echo -e "  | |     / /___  / ___/____  ___  ___  ____/ / "
@@ -22,6 +22,7 @@ unset lastmonthfile ;
 unset LastMonth ;
 unset TodayMonth ;
 unset HISTFILE
+alias wp='/usr/php/54/usr/bin/php-cli /usr/local/bin/wp'
 export LANG="en_US.utf8" ;
 unset boxx
 unset boxfullname
@@ -113,7 +114,7 @@ if [[ -z "$WPcorefiles" ]]; then
 
 echo -e "\nHow many times this site calls to each plugin on per page load:\n" ;
 
-strace php index.php 2>&1 | perl -ne 'if (/(mu-plugins|plugins)\/([\w\d-_]*)/ ) { print "$1/$2\n" }' | sort | uniq -c | sort -n | sed '/mu-plugins\/sso/ d';
+strace php index.php 2>&1 | perl -ne 'if (/(mu-plugins|plugins)\/([\w\d-_]*)/ ) { print "$1/$2\n" }' | sort | uniq -c | sort -n | sed '/mu-plugins\/sso/ d' | sed '/-en_[[:upper:]][[:upper:]]/d' ;
 fi
 
 fi
