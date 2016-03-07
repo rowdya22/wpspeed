@@ -7,7 +7,7 @@ echo -e "  | |     / /___  / ___/____  ___  ___  ____/ / "
 echo -e "  | | /| / / __ \ \__ \/ __ \/ _ \/ _ \/ __  /  "
 echo -e "  | |/ |/ / /_/ / __/ / /_/ /  __/  __/ /_/ /   "
 echo -e "  |__/|__/ .___/ /___/ .___/\___/\___/\__,_/    "
-echo -e "        /_/  $wpspeedv   /_/   a few wp performance tests"
+echo -e "        /_/  $wpspeedv  /_/   a few wp performance tests"
 echo
 
 unset loadhistory ;
