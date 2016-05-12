@@ -4,7 +4,7 @@ A few WordPress a server performance tests
 ## How to use this tool
 Once you have made a SSH connection to an account with wordpress installed run this command:
 
-    . <(curl -sS https://raw.githubusercontent.com/miles-cm/wpspeed/master/wpspeed)
+    . <(curl -sS https://raw.githubusercontent.com/rowdya22/wpspeed/master/wpspeed)
 
 ## Available commands:
 **wpspeed**
