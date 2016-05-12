@@ -155,27 +155,27 @@ IsHtaccessFilePresent=$(find -maxdepth 1 -name ".htaccess" )
 if [[ -z "$IsWThreeTotalCacheInstalled" ]]; then
 
    if [[ -z "$IsHtaccessFilePresent" ]]; then
-       echo -e "1) Gzip compression: \e[1;31mdoes not appear to be enabled (no .htaccess file found).\e[0m \n   Suggestion: Install w3-total-cache or add code directly to .htaccess"
+       echo -e "1) Gzip compression: \e[1;31mdoes not appear to be enabled (no .htaccess file found).\e[0m \n   Suggestion: Install wp-super-cache or add code directly to .htaccess"
   else
    echo -en "1) Gzip compression:"
     if egrep -q "AddOutputFilterByType DEFLATE|mod_gzip" .htaccess
     then
      echo -en "\e[0;32m appears to be enabled in .htaccess.\e[0m\n"
     else
-     echo -e "\e[1;31m does not appear to be enabled in .htaccess.\e[0m\n   Suggestion: Install w3-total-cache or add code directly to .htaccess"
+     echo -e "\e[1;31m does not appear to be enabled in .htaccess.\e[0m\n   Suggestion: Install wp-super-cache or add code directly to .htaccess"
     fi 
   fi
     else
 
     if [[ -z "$IsHtaccessFilePresent" ]]; then
-    echo -e "1) Gzip compression: \e[1;31mdoes not appear to be enabled (no .htaccess file found).\e[0m \n   Suggestion: Since w3-total-cache is already installed, the easiest fix\n   would be to enable it there."
+    echo -e "1) Gzip compression: \e[1;31mdoes not appear to be enabled (no .htaccess file found).\e[0m \n   Suggestion: Since wp-super-cache is already installed, the easiest fix\n   would be to enable it there."
   else
    echo -en "1) Gzip compression:"
     if egrep -q "AddOutputFilterByType DEFLATE|mod_gzip" .htaccess
     then
      echo -en "\e[0;32m appears to be enabled in .htaccess.\e[0m\n"
     else
-     echo -e "\e[1;31m does not appear to be enabled in .htaccess.\e[0m\n   Suggestion: Since w3-total-cache is already installed, the easiest fix\n   would be to enable it there."
+     echo -e "\e[1;31m does not appear to be enabled in .htaccess.\e[0m\n   Suggestion: Since wp-super-cache is already installed, the easiest fix\n   would be to enable it there."
     fi 
 
 fi
@@ -472,7 +472,7 @@ if [[ $IsWordfenceInstalled ]]
        then
          echo -en "\e[0;32m $InstalledCachingPlugins installed.\n\e[0m"
        else
-         echo -e "\e[1;31m no known caching plugins found...sort of.\n\e[0;36m   WordFence is installed, which does have some basic caching features,\n   although almost no one uses them. WordFence is not the most effective\n   caching or complete caching solution. It's great for security though.\e[0m\n   Suggestion: Install either w3-total-cache or wp-super-cache."
+         echo -e "\e[1;31m no known caching plugins found...sort of.\n\e[0;36m   WordFence is installed, which does have some basic caching features,\n   although almost no one uses them. WordFence is not the most effective\n   caching or complete caching solution. It's great for security though.\e[0m\n   Suggestion: Install wp-super-cache."
      fi
  else
    if [[ $InstalledCachingPlugins ]]
