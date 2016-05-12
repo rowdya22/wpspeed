@@ -109,7 +109,7 @@ if [[ $1 == "--plugins" || $1 == "-plugins" || $1 == "-p" || $1 == "p" || $1 == 
 unset WPcorefiles
 WPcorefiles=$(find -maxdepth 1 -name "wp-config.php" )
 if [[ -z "$WPcorefiles" ]]; then
-  echo -e "\e[0;31m\nError: WordPress core files not found in this directory.\e[0m \n\n(This is supposed to be run inside the directory where WordPress is.)\n"
+  echo -e "\e[1;31m\nError: WordPress core files not found in this directory.\e[0m \n\n(This is supposed to be run inside the directory where WordPress is.)\n"
  else
 
 echo -e "\nHow many times this site calls to each plugin on per page load:\n" ;
@@ -132,7 +132,7 @@ unset WPcorefiles
 
 WPcorefiles=$(find -maxdepth 1 -name "wp-config.php" )
 if [[ -z "$WPcorefiles" ]]; then
-  echo -e "\e[0;31m\nError: WordPress core files not found in this directory.\e[0m \n\n(This is supposed to be run inside the directory where WordPress is.)\n"
+  echo -e "\e[1;31m\nError: WordPress core files not found in this directory.\e[0m \n\n(This is supposed to be run inside the directory where WordPress is.)\n"
  else
 
 echo -en "\nOptimization Report for " 
@@ -155,27 +155,27 @@ IsHtaccessFilePresent=$(find -maxdepth 1 -name ".htaccess" )
 if [[ -z "$IsWThreeTotalCacheInstalled" ]]; then
 
    if [[ -z "$IsHtaccessFilePresent" ]]; then
-       echo -e "1) Gzip compression: \e[0;31mdoes not appear to be enabled (no .htaccess file found).\e[0m \n   Suggestion: Install w3-total-cache or add code directly to .htaccess"
+       echo -e "1) Gzip compression: \e[1;31mdoes not appear to be enabled (no .htaccess file found).\e[0m \n   Suggestion: Install w3-total-cache or add code directly to .htaccess"
   else
    echo -en "1) Gzip compression:"
     if egrep -q "AddOutputFilterByType DEFLATE|mod_gzip" .htaccess
     then
      echo -en "\e[0;32m appears to be enabled in .htaccess.\e[0m\n"
     else
-     echo -e "\e[0;31m does not appear to be enabled in .htaccess.\e[0m\n   Suggestion: Install w3-total-cache or add code directly to .htaccess"
+     echo -e "\e[1;31m does not appear to be enabled in .htaccess.\e[0m\n   Suggestion: Install w3-total-cache or add code directly to .htaccess"
     fi 
   fi
     else
 
     if [[ -z "$IsHtaccessFilePresent" ]]; then
-    echo -e "1) Gzip compression: \e[0;31mdoes not appear to be enabled (no .htaccess file found).\e[0m \n   Suggestion: Since w3-total-cache is already installed, the easiest fix\n   would be to enable it there."
+    echo -e "1) Gzip compression: \e[1;31mdoes not appear to be enabled (no .htaccess file found).\e[0m \n   Suggestion: Since w3-total-cache is already installed, the easiest fix\n   would be to enable it there."
   else
    echo -en "1) Gzip compression:"
     if egrep -q "AddOutputFilterByType DEFLATE|mod_gzip" .htaccess
     then
      echo -en "\e[0;32m appears to be enabled in .htaccess.\e[0m\n"
     else
-     echo -e "\e[0;31m does not appear to be enabled in .htaccess.\e[0m\n   Suggestion: Since w3-total-cache is already installed, the easiest fix\n   would be to enable it there."
+     echo -e "\e[1;31m does not appear to be enabled in .htaccess.\e[0m\n   Suggestion: Since w3-total-cache is already installed, the easiest fix\n   would be to enable it there."
     fi 
 
 fi
@@ -280,7 +280,7 @@ if [[ $InstalledDBCleanupPlugins ]]
 then
  echo -en "\e[0;32m $InstalledDBCleanupPlugins installed.\n\e[0m"
 else
- echo -e "\e[0;31m no known database cleanup plugins found.\e[0m\n   Suggestion: Install either the wp-sweep or wp-optimize plugin."
+ echo -e "\e[1;31m no known database cleanup plugins found.\e[0m\n   Suggestion: Install either the wp-sweep or wp-optimize plugin."
 fi
 
 
@@ -347,7 +347,7 @@ if [[ $InstalledImgCompressionPlugins ]]
 then
  echo -en "\e[0;32m $InstalledImgCompressionPlugins installed.\n\e[0m"
 else
- echo -e "\e[0;31m no known image compression plugins found.\e[0m\n\e[0;36m   Note: Customer may be compressing images manually instead of using a plugin.\e[0m\n    Suggestion: Install either tiny-compress-images or ewww-image-optimizer."
+ echo -e "\e[1;31m no known image compression plugins found.\e[0m\n\e[0;36m   Note: Customer may be compressing images manually instead of using a plugin.\e[0m\n    Suggestion: Install either tiny-compress-images or ewww-image-optimizer."
 fi
 
 
@@ -472,14 +472,14 @@ if [[ $IsWordfenceInstalled ]]
        then
          echo -en "\e[0;32m $InstalledCachingPlugins installed.\n\e[0m"
        else
-         echo -e "\e[0;31m no known caching plugins found...sort of.\n\e[0;36m   WordFence is installed, which does have some basic caching features,\n   although almost no one uses them. WordFence is not the most effective\n   caching or complete caching solution. It's great for security though.\e[0m\n   Suggestion: Install either w3-total-cache or wp-super-cache."
+         echo -e "\e[1;31m no known caching plugins found...sort of.\n\e[0;36m   WordFence is installed, which does have some basic caching features,\n   although almost no one uses them. WordFence is not the most effective\n   caching or complete caching solution. It's great for security though.\e[0m\n   Suggestion: Install either w3-total-cache or wp-super-cache."
      fi
  else
    if [[ $InstalledCachingPlugins ]]
      then
        echo -en "\e[0;32m $InstalledCachingPlugins installed.\n\e[0m"
    else
-     echo -e "\e[0;31m no known no caching plugins found.\e[0m"
+     echo -e "\e[1;31m no known no caching plugins found.\e[0m"
    fi
 fi
 
@@ -491,14 +491,14 @@ fi
 unset IsHtaccessFilePresent
 IsHtaccessFilePresent=$(find -maxdepth 1 -name ".htaccess" )
   if [[ -z "$IsHtaccessFilePresent" ]]; then
-    echo -e "5) Browser cache rules: \e[0;31mdo not appear to be present (no .htaccess file found).\e[0m"
+    echo -e "5) Browser cache rules: \e[1;31mdo not appear to be present (no .htaccess file found).\e[0m"
   else
    echo -en "5) Browswer cache rules:"
     if egrep -q "AddType|ExpiresByType|Header set Cache-Control" .htaccess
     then
      echo -en "\e[0;32m appear to be present in .htaccess.\e[0m\n"
     else
-     echo -en "\e[0;31m do not appear to be present in .htaccess.\e[0m\n"
+     echo -en "\e[1;31m do not appear to be present in .htaccess.\e[0m\n"
     fi 
   fi
 
