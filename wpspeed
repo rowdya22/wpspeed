@@ -495,7 +495,7 @@ IsHtaccessFilePresent=$(find -maxdepth 1 -name ".htaccess" )
   if [[ -z "$IsHtaccessFilePresent" ]]; then
     echo -e "5) Browser cache rules: \e[1;31mdo not appear to be present (no .htaccess file found).\e[0m"
   else
-   echo -en "5) Browswer cache rules:"
+   echo -en "5) Browser cache rules:"
     if egrep -q "AddType|ExpiresByType|Header set Cache-Control" .htaccess
     then
      echo -en "\e[0;32m appear to be present in .htaccess.\e[0m\n"
