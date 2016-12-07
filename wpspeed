@@ -468,6 +468,11 @@ then
  InstalledCachingPlugins="$InstalledCachingPlugins zencache-pro,"
 fi
 
+if [ -d wp-content/endurance-page-cache ]
+then
+ InstalledCachingPlugins="$InstalledCachingPlugins endurance-page-cache,"
+fi
+
 if [[ $IsWordfenceInstalled ]]
    then
      if [[ $InstalledCachingPlugins ]]
