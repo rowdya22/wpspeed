@@ -479,7 +479,7 @@ if [[ $IsWordfenceInstalled ]]
        then
          echo -en "\e[0;32m $InstalledCachingPlugins installed.\n\e[0m"
        else
-         echo -e "\e[1;31m no known caching plugins found...sort of.\n\e[0;36m   WordFence is installed, which does have some basic caching features,\n   although almost no one uses them. WordFence is not the most effective\n   caching or complete caching solution. It's great for security though.\e[0m\n   Suggestion: Install wp-super-cache."
+         echo -e "\e[1;31m no known caching plugins found...sort of.\n\e[0;36m   WordFence is installed, which does have some basic caching features,\n   although almost no one uses them. WordFence is not the most effective\n   caching or complete caching solution. It's great for security though.\e[0m\n   Suggestion: Install endurance browser/page cache."
      fi
  else
    if [[ $InstalledCachingPlugins ]]
