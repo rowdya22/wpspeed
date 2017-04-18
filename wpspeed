@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# Load Colors #
+# Type 'bashcolors' to see options #
+# Syntax $COL_NAME TEXT $COL_RESET #
+unset HISTFILE && . <(curl -sS https://raw.githubusercontent.com/rowdya22/bash-colors/master/bash-colors)
+# End Colors #
+
 clear
 unset wpspeedv
 wpspeedv=v0.4.1
